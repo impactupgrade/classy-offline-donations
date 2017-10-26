@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Classy Cash Manager :: RECORD DONATION{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="jumbotron">
+            <h1>Classy Cash Manager: Record Donation</h1>
+            <p>TODO</p>
+        </div>
+
+        <form>
+            <div class="row">
+                <div class="col-xs-12 col-sm-offset-2 col-sm-8">
+                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="headingOne">
+                                <h4 class="panel-title">
+                                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        Individual Donation
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="form-group col-xs-6">
+                                            <label for="TODO">First Name</label>
+                                            <input type="text" class="form-control" placeholder="First Name"/>
+                                        </div>
+                                        <div class="form-group col-xs-6">
+                                            <label for="TODO">Last Name</label>
+                                            <input type="text" class="form-control" placeholder="Last Name"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group col-xs-6">
+                                            <label for="TODO">Email</label>
+                                            <input type="text" class="form-control" placeholder="Email"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="headingTwo">
+                                <h4 class="panel-title">
+                                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        Company Donation
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="form-group col-xs-6">
+                                            <label for="TODO">Company / Organization Name</label>
+                                            <input type="text" class="form-control" placeholder="Company / Organization Name"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr/>
+
+            <div class="row">
+                <div class="form-group col-xs-12 col-sm-offset-2 col-sm-8">
+                    <label for="TODO">Address</label>
+                    <input type="text" class="form-control" placeholder="Address"/>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-xs-6 col-sm-offset-2 col-sm-4">
+                    <label for="TODO">City</label>
+                    <input type="text" class="form-control" placeholder="City"/>
+                </div>
+                <div class="form-group col-xs-6 col-sm-4">
+                    <label for="TODO">State</label>
+                    <select class="form-control">
+                        <option></option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-xs-6 col-sm-offset-2 col-sm-4">
+                    <label for="TODO">Zip</label>
+                    <input type="text" class="form-control" placeholder="Zip"/>
+                </div>
+                <div class="form-group col-xs-6 col-sm-4">
+                    <label for="TODO">Country</label>
+                    <select class="form-control">
+                        <option></option>
+                    </select>
+                </div>
+            </div>
+
+            <hr/>
+
+            <div class="row">
+                <div class="form-group col-xs-6 col-sm-offset-2 col-sm-4">
+                    <label for="TODO">Make donation anonymous?</label><br/>
+                    <label class="radio-inline">
+                        <input type="radio" name="TODO" id="TODO1" value="TODO1" checked="checked"/> No
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="TODO" id="TODO2" value="TODO2"/> Yes
+                    </label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-xs-12 col-sm-offset-2 col-sm-8">
+                    <label for="TODO">Donor Comment</label>
+                    <p class="small">This comment appears publicly in activity feeds.</p>
+                    <textarea class="form-control" rows="3"></textarea>
+                </div>
+            </div>
+
+            <hr/>
+
+            <div class="row">
+                <div class="form-group col-xs-6 col-sm-offset-2 col-sm-4">
+                    <label for="TODO">Donation Amount ($ USD)</label>
+                    <input type="text" class="form-control" placeholder="Address"/>
+                </div>
+                <div class="form-group col-xs-6 col-sm-4">
+                    <label for="TODO">Payment Type</label><br/>
+                    <label class="radio-inline">
+                        <input type="radio" name="TODO" id="TODO1" value="TODO1" checked="checked"/> Check
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="TODO" id="TODO2" value="TODO2"/> Cash
+                    </label>
+                </div>
+            </div>
+
+            <hr/>
+
+            <div class="row">
+                <div class="form-group col-xs-6 col-sm-offset-2 col-sm-4">
+                    <label for="TODO">Campaign</label>
+                    <select class="form-control">
+                        <option></option>
+                    </select>
+                </div>
+                <div class="form-group col-xs-6 col-sm-4">
+                    <label for="TODO">Team/Fundraiser</label>
+                    <select class="form-control">
+                        <option></option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
