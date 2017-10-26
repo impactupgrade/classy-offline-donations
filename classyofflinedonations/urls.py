@@ -1,4 +1,4 @@
-"""classycashmanager URL Configuration
+"""classyofflinedonations URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.11/topics/http/urls/
@@ -18,7 +18,7 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^org/', include('classycashmanager.org.urls')),
+    url(r'^org/', include('classyofflinedonations.org.urls')),
     # Can this be something like ^$ instead?  Wasn't working...
-    url(r'^core/', include('classycashmanager.core.urls')),
+    url(r'^core/', include('classyofflinedonations.core.urls')),
 ]
