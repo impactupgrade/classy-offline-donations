@@ -1,0 +1,1 @@
+web: gunicorn classyofflinedonations.wsgi --log-file -
