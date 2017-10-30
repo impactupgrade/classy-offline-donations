@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'classyofflinedonations.core',
+    'classyofflinedonations.front',
     'classyofflinedonations.org',
 ]
 
