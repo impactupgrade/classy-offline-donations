@@ -15,13 +15,14 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-
-from classyofflinedonations import front
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^org/', include('classyofflinedonations.org.urls')),
     # Can this be something like ^$ instead?  Wasn't working...
     url(r'^core/', include('classyofflinedonations.core.urls')),
-    url(r'^$', front.views.index, name='index'),
+    url(r'^$', include('classyofflinedonations.front.urls')),
 ]
+
+urlpatterns += staticfiles_urlpatterns()
