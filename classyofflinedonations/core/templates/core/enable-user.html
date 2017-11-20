@@ -1,0 +1,30 @@
+{% extends "core/base.html" %}
+{% load bootstrap_template_tags %}
+
+{% block title %}Classy Offline Donations :: ENABLE USER{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="jumbotron">
+            <h1>Classy Offline Donations: Enable User</h1>
+            <p>TODO</p>
+        </div>
+
+        <form action="/core/enable-user" method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="form-group col-xs-6 col-sm-offset-2 col-sm-4">
+                    {% form_group form.email %}
+                </div>
+                <div class="form-group col-xs-6 col-sm-4">
+                    {% form_group form.password %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-xs-6 col-sm-offset-2 col-sm-4">
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

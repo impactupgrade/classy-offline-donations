@@ -19,10 +19,8 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^org/', include('classyofflinedonations.org.urls')),
     # Can this be something like ^$ instead?  Wasn't working...
     url(r'^core/', include('classyofflinedonations.core.urls')),
-    url(r'^$', include('classyofflinedonations.front.urls')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
