@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 
@@ -53,8 +54,13 @@ def enable_user(request):
         form = EnableUserForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
             if classy.has_account(email):
-                # TODO: create account
+                user = User.objects.create_user(email, email, password)
+                # TODO: May need a checkbox and role for users that can approve donations for their team(s)
+                # user.user_permissions.add()
+                user.save()
+
                 messages.success(request, 'Successfully enabled ' + email)
                 return redirect('/core/enable-user')
             else:
