@@ -1,9 +1,9 @@
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 
-from .forms import EnableUserForm
+from .forms import EnableUserForm, LoginForm
 from .services import classy
 
 
@@ -17,7 +17,37 @@ def donation(request):
     return render(request, 'core/donation.html', context)
 
 
-# @permission_required('core.can_enable_user')
+def core_login(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            user = authenticate(username=email, password=password)
+            if user is not None:
+                login(request, user)
+                if request.POST.get('next') is not None:
+                    return redirect(request.POST.get('next'))
+                else:
+                    return redirect('/core')
+            else:
+                messages.error(request, 'Invalid email or password')
+
+    else:
+        form = LoginForm()
+
+    context = {'form': form}
+    if request.GET.get('next') is not None:
+        context['next'] = request.GET.get('next')
+    return render(request, 'core/login.html', context)
+
+
+def core_logout(request):
+    logout(request)
+    return redirect('/core')
+
+
+@permission_required('core.can_enable_user', login_url="/core/login")
 def enable_user(request):
     if request.method == 'POST':
         form = EnableUserForm(request.POST)
@@ -26,7 +56,7 @@ def enable_user(request):
             if classy.has_account(email):
                 # TODO: create account
                 messages.success(request, 'Successfully enabled ' + email)
-                return HttpResponseRedirect('/core/enable-user')
+                return redirect('/core/enable-user')
             else:
                 messages.error(request, email + ' does not exist in Classy')
 

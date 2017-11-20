@@ -8,6 +8,14 @@ class BootstrapForm(forms.Form):
             field.widget.attrs['class'] = 'form-control'
 
 
+class LoginForm(BootstrapForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    email = forms.EmailField(label="Email")
+    password = forms.CharField(widget=forms.PasswordInput(), label="Password")
+
+
 class EnableUserForm(BootstrapForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
