@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 
-from .forms import EnableUserForm, LoginForm
+from .forms import *
 from .services import classy
 
 
@@ -14,8 +14,17 @@ def index(request):
 
 
 def donation(request):
-    context = {}
-    return render(request, 'core/donation.html', context)
+    if request.method == 'POST':
+        form = DonationForm(request.POST)
+        if form.is_valid():
+            classy.create_donation(form, request.session)
+            messages.success(request, 'Successfully created donation!')
+            return redirect('/core/donation')
+    else:
+        fundraiser_choices = classy.get_fundraisers(request.session)
+        form = DonationForm(fundraiser_choices=fundraiser_choices)
+
+    return render(request, 'core/donation.html', {'form': form})
 
 
 def core_login(request):
