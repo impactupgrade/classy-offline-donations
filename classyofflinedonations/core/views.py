@@ -4,18 +4,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 
-from .forms import EnableUserForm, LoginForm
+from .forms import *
 from .services import classy
 
 
 def index(request):
     context = {}
     return render(request, 'core/index.html', context)
-
-
-def donation(request):
-    context = {}
-    return render(request, 'core/donation.html', context)
 
 
 def core_login(request):
@@ -27,6 +22,7 @@ def core_login(request):
             user = authenticate(username=email, password=password)
             if user is not None:
                 login(request, user)
+                classy.set_access_token(email, request.session)
                 if request.POST.get('next') is not None:
                     return redirect(request.POST.get('next'))
                 else:
@@ -57,8 +53,6 @@ def enable_user(request):
             password = form.cleaned_data['password']
             if classy.has_account(email):
                 user = User.objects.create_user(email, email, password)
-                # TODO: May need a checkbox and role for users that can approve donations for their team(s)
-                # user.user_permissions.add()
                 user.save()
 
                 messages.success(request, 'Successfully enabled ' + email)
@@ -70,3 +64,19 @@ def enable_user(request):
         form = EnableUserForm()
 
     return render(request, 'core/enable-user.html', {'form': form})
+
+
+@login_required(login_url="/core/login")
+def donation(request):
+    if request.method == 'POST':
+        form = DonationForm(request.POST)
+        if form.is_valid():
+            classy.create_donation(form, request.session)
+            messages.success(request, 'Successfully created donation!')
+            return redirect('/core/donation')
+    else:
+        fundraiser_choices = classy.get_fundraisers(request.session)
+        # team_choices = classy.get_teams(request.session)
+        form = DonationForm(fundraiser_choices=fundraiser_choices)
+
+    return render(request, 'core/donation.html', {'form': form})
