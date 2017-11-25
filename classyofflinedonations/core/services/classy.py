@@ -27,7 +27,9 @@ def set_access_token(email, session):
 def get_json(path, token):
     client = OAuth2Session(os.environ['CLASSY_CLIENT_ID'], token=token)
     resp = client.get("https://api.classy.org/2.0/" + path)
-    return resp.json()
+    json_data = resp.json()
+    print(json_data)
+    return json_data
 
 
 def post_json(path, json_data, token):
@@ -39,7 +41,7 @@ def post_json(path, json_data, token):
 def get_member_id(email):
     # TODO: Need to verify the correct CLASSY_ORG_ID as well with /members/{id}/organizations
     json_data = get_json("members/" + email, get_access_token())
-    return json_data['id']
+    return str(json_data['id'])
 
 
 def has_account(email):

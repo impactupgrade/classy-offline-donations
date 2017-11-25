@@ -13,20 +13,6 @@ def index(request):
     return render(request, 'core/index.html', context)
 
 
-def donation(request):
-    if request.method == 'POST':
-        form = DonationForm(request.POST)
-        if form.is_valid():
-            classy.create_donation(form, request.session)
-            messages.success(request, 'Successfully created donation!')
-            return redirect('/core/donation')
-    else:
-        fundraiser_choices = classy.get_fundraisers(request.session)
-        form = DonationForm(fundraiser_choices=fundraiser_choices)
-
-    return render(request, 'core/donation.html', {'form': form})
-
-
 def core_login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -36,6 +22,7 @@ def core_login(request):
             user = authenticate(username=email, password=password)
             if user is not None:
                 login(request, user)
+                classy.set_access_token(email, request.session)
                 if request.POST.get('next') is not None:
                     return redirect(request.POST.get('next'))
                 else:
@@ -79,3 +66,18 @@ def enable_user(request):
         form = EnableUserForm()
 
     return render(request, 'core/enable-user.html', {'form': form})
+
+
+@login_required(login_url="/core/login")
+def donation(request):
+    if request.method == 'POST':
+        form = DonationForm(request.POST)
+        if form.is_valid():
+            classy.create_donation(form, request.session)
+            messages.success(request, 'Successfully created donation!')
+            return redirect('/core/donation')
+    else:
+        fundraiser_choices = classy.get_fundraisers(request.session)
+        form = DonationForm(fundraiser_choices=fundraiser_choices)
+
+    return render(request, 'core/donation.html', {'form': form})
