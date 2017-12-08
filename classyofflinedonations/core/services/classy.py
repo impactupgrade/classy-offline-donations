@@ -15,20 +15,20 @@ import json
 def get_access_token():
     client = BackendApplicationClient(client_id=os.environ['CLASSY_CLIENT_ID'])
     oauth = OAuth2Session(client=client)
+    # TODO: Set timeout rather high...
     return oauth.fetch_token(token_url='https://api.classy.org/oauth2/auth', client_id=os.environ['CLASSY_CLIENT_ID'],
                              client_secret=os.environ['CLASSY_CLIENT_SECRET'])
 
 
 def set_access_token(email, session):
-    session['CLASSY_TOKEN'] = get_access_token()
     session['CLASSY_MEMBER_ID'] = get_member_id(email)
+    session['CLASSY_TOKEN'] = get_access_token()
 
 
 def get_json(path, token):
     client = OAuth2Session(os.environ['CLASSY_CLIENT_ID'], token=token)
     resp = client.get("https://api.classy.org/2.0/" + path)
     json_data = resp.json()
-    print(json_data)
     return json_data
 
 
@@ -39,13 +39,11 @@ def post_json(path, json_data, token):
 
 
 def get_member_id(email):
-    # TODO: Need to verify the correct CLASSY_ORG_ID as well with /members/{id}/organizations
     json_data = get_json("members/" + email, get_access_token())
     return str(json_data['id'])
 
 
 def has_account(email):
-    # TODO: Need to verify the correct CLASSY_ORG_ID as well with /members/{id}/organizations
     json_data = get_json("members/" + email, get_access_token())
     return "error" not in json_data
 
@@ -53,14 +51,26 @@ def has_account(email):
 def get_fundraisers(session):
     fundraisers = {}
 
-    json_data = get_json("/members/" + session['CLASSY_MEMBER_ID'] + "/fundraising-pages?with=fundraising_team,campaign",
-                         session['CLASSY_TOKEN'])
-    # TODO (and not sure if the with=campaign is even valid)
-    # for fundraiserJson in json_data['data']:
-    #     campaigns[campaignJson['id']] = campaignJson['name']
-    print(json_data)
+    json_data = get_json("/organizations/" + os.environ['CLASSY_ORG_ID'] + "/fundraising-pages?filter=member_id="
+                         + session['CLASSY_MEMBER_ID'] + "&with=fundraising_team", get_access_token())
+    # json_data = get_json("/organizations/" + os.environ['CLASSY_ORG_ID'] + "/fundraising-pages?filter=member_id=5922949"
+    #                      "&with=fundraising_team", get_access_token())
+    for fundraiser_json in json_data['data']:
+        fundraiser_label = fundraiser_json['title']
+        if fundraiser_json['fundraising_team_id'] is not None:
+            fundraiser_label += " (" + fundraiser_json['fundraising_team']['name'] + ")"
+        fundraisers[fundraiser_json['id']] = fundraiser_label
 
-    return fundraisers
+    return fundraisers.items()
+
+
+# TODO: Should likely only be applicable to team *leads* -- on hold
+# def get_teams(session):
+#     teams = {}
+#
+#
+#
+#     return teams
 
 
 def create_donation(donation_form, session):
@@ -107,11 +117,14 @@ def create_donation(donation_form, session):
 
 # os.environ['CLASSY_CLIENT_ID'] = "QKf0bWUA1exCDy79"
 # os.environ['CLASSY_CLIENT_SECRET'] = "T8A4aDx1rZ8SG5yK"
+# os.environ['CLASSY_ORG_ID'] = "21729"
 # __session = {}
-# set_access_token( __session)
-# json_data = get_json("/members/" + str(5922949), __session)
-# # json_data = get_json("/members/" + str(5922949) + "/fundraising-pages?with=fundraising_team,campaign", __session)
-# print(json_data)
+# set_access_token("brett@3riverdev.com", __session)
+# __json_data = get_json("/organizations/" + os.environ['CLASSY_ORG_ID'] + "/fundraising-pages?filter=member_id=5922949&with=fundraising_team", get_access_token())
+# {'total': 1, 'per_page': 20, 'current_page': 1, 'last_page': 1, 'next_page_url': None, 'prev_page_url': None, 'from': 1, 'to': 1, 'data': [{'status': 'active', 'fundraising_team_id': 143213, 'campaign_id': 145704, 'team_role': None, 'logo_id': 251766, 'cover_photo_id': None, 'commitment': None, 'thank_you_text': None, 'updated_at': '2017-11-15T13:39:16+0000', 'raw_currency_code': 'USD', 'raw_goal': '100.000', 'id': 1182331, 'member_id': 5922949, 'organization_id': 21729, 'designation_id': None, 'title': 'Faith Lewis', 'intro_text': '<p>Help us raise money for Destiny Rescue</p>', 'thankyou_email_text': None, 'member_email_text': None, 'logo_url': 'https://assets.classy.org/3543993/6f6a32fc-dd9a-11e6-9863-06028f6061f3.jpg', 'goal': '100.00', 'created_at': '2017-11-02T16:16:05+0000', 'started_at': '2017-11-02T04:00:00+0000', 'ended_at': None, 'alias': 'Faith Lewis', 'currency_code': 'USD', 'canonical_url': 'https://www.classy.org/fundraiser/1182331', 'fundraising_team': {'raw_currency_code': 'USD', 'id': 143213, 'name': 'DeKalb High School Bible Study', 'description': '<p>Help us raise money for Destiny Rescue</p>', 'goal': '300.00'}}]}
+# __json_data = get_json("/organizations/" + os.environ['CLASSY_ORG_ID'] + "/supporters?filter=member_id=5922949", get_access_token())
+# json_data = get_json("/members/" + str(5922949) + "/fundraising-pages?with=fundraising_team,campaign", get_access_token())
+# print(__json_data)
 
 # >>> from requests_oauthlib import OAuth2Session
 # >>> from oauthlib.oauth2 import TokenExpiredError

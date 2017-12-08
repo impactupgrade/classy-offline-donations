@@ -78,6 +78,7 @@ def donation(request):
             return redirect('/core/donation')
     else:
         fundraiser_choices = classy.get_fundraisers(request.session)
+        # team_choices = classy.get_teams(request.session)
         form = DonationForm(fundraiser_choices=fundraiser_choices)
 
     return render(request, 'core/donation.html', {'form': form})

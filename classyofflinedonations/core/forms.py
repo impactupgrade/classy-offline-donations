@@ -28,7 +28,8 @@ class EnableUserForm(BootstrapForm):
 class DonationForm(BootstrapForm):
     def __init__(self, fundraiser_choices=(), *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fundraisers = forms.ChoiceField(choices=fundraiser_choices, label="Fundraiser")
+        self.fields['fundraiser'].choices = fundraiser_choices
+        # self.team = forms.ChoiceField(choices=team_choices, label="Team")
 
     # individual
     first_name = forms.CharField(required=False, label="First Name")
@@ -49,3 +50,6 @@ class DonationForm(BootstrapForm):
     amount = forms.DecimalField(label="Donation Amount ($ USD)")
     TYPE_CHOICES = (('check', 'Check'), ('cash', 'Cash'))
     type = forms.ChoiceField(choices=TYPE_CHOICES, label="Payment Type")
+
+    # TODO: Required for now, but will need to make optional once Team is supported.  But *one* of them is required!
+    fundraiser = forms.ChoiceField(choices=(), label="Fundraiser")
