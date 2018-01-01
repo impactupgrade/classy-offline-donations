@@ -51,7 +51,7 @@ def enable_user(request):
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-            if classy.has_account(email):
+            if classy.has_account(email, request.session):
                 user = User.objects.create_user(email, email, password)
                 user.save()
 
@@ -67,16 +67,28 @@ def enable_user(request):
 
 
 @login_required(login_url="/core/login")
-def donation(request):
+def donate(request):
+    fundraiser_choices = classy.get_fundraisers(request.session)
+
     if request.method == 'POST':
-        form = DonationForm(request.POST)
+        form = DonationForm(fundraiser_choices, request.POST)
         if form.is_valid():
             classy.create_donation(form, request.session)
             messages.success(request, 'Successfully created donation!')
-            return redirect('/core/donation')
+            return redirect('/core/donate')
     else:
-        fundraiser_choices = classy.get_fundraisers(request.session)
         # team_choices = classy.get_teams(request.session)
-        form = DonationForm(fundraiser_choices=fundraiser_choices)
+        form = DonationForm(fundraiser_choices)
 
-    return render(request, 'core/donation.html', {'form': form})
+    return render(request, 'core/donate.html', {'form': form})
+
+
+@permission_required('core.can_approve_donation', login_url="/core/login")
+def approve(request):
+    donations = classy.get_donations(request.session)
+
+    # if request.method == 'POST':
+    # TODO: use to approve 1..n donations with checkboxes
+    # else:
+
+    return render(request, 'core/approve.html', {'donations': donations})

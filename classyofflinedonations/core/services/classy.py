@@ -1,28 +1,36 @@
 import os
-from oauthlib.oauth2 import LegacyApplicationClient, BackendApplicationClient
+from oauthlib.oauth2 import BackendApplicationClient
 from requests_oauthlib import OAuth2Session
 import json
 
 
-# def set_access_token(username, password, session):
-#     client = LegacyApplicationClient(client_id=os.environ['CLASSY_CLIENT_ID'])
-#     oauth = OAuth2Session(client=client)
-#     token = oauth.fetch_token(token_url='https://api.classy.org/oauth2/auth', client_id=os.environ['CLASSY_CLIENT_ID'],
-#         client_secret=os.environ['CLASSY_CLIENT_SECRET'], username=username, password=password)
-#     session['CLASSY_TOKEN'] = token
+def get_access_token(session):
+    if 'CLASSY_TOKEN' in session:
+        # TODO: Check if expired and support refresh (see commented-out code below)
+        return session['CLASSY_TOKEN']
+    else:
+        client = BackendApplicationClient(client_id=os.environ['CLASSY_CLIENT_ID'])
+        oauth = OAuth2Session(client=client)
+        # TODO: Set timeout rather high...
+        return oauth.fetch_token(token_url='https://api.classy.org/oauth2/auth', client_id=os.environ['CLASSY_CLIENT_ID'],
+                                 client_secret=os.environ['CLASSY_CLIENT_SECRET'])
 
 
-def get_access_token():
-    client = BackendApplicationClient(client_id=os.environ['CLASSY_CLIENT_ID'])
-    oauth = OAuth2Session(client=client)
-    # TODO: Set timeout rather high...
-    return oauth.fetch_token(token_url='https://api.classy.org/oauth2/auth', client_id=os.environ['CLASSY_CLIENT_ID'],
-                             client_secret=os.environ['CLASSY_CLIENT_SECRET'])
+# >>> from requests_oauthlib import OAuth2Session
+# >>> from oauthlib.oauth2 import TokenExpiredError
+# >>> try:
+# ...     client = OAuth2Session(client_id, token=token)
+# ...     r = client.get(protected_url)
+# >>> except TokenExpiredError as e:
+# ...     token = client.refresh_token(refresh_url, **extra)
+# ...     token_saver(token)
+# >>> client = OAuth2Session(client_id, token=token)
+# >>> r = client.get(protected_url)
 
 
 def set_access_token(email, session):
-    session['CLASSY_MEMBER_ID'] = get_member_id(email)
-    session['CLASSY_TOKEN'] = get_access_token()
+    session['CLASSY_MEMBER_ID'] = get_member_id(email, session)
+    session['CLASSY_TOKEN'] = get_access_token(session)
 
 
 def get_json(path, token):
@@ -34,27 +42,37 @@ def get_json(path, token):
 
 def post_json(path, json_data, token):
     client = OAuth2Session(os.environ['CLASSY_CLIENT_ID'], token=token)
-    resp = client.post("https://api.classy.org/2.0/" + path, json=json_data)
+    resp = client.post("https://api.classy.org/2.0/" + path, json=json_data, headers={'Content-Type': 'application/json'})
+    print(json_data)
+    print("https://api.classy.org/2.0/" + path)
+    print(resp.text)
     return resp.json()
 
 
-def get_member_id(email):
-    json_data = get_json("members/" + email, get_access_token())
+def put_json(path, json_data, token):
+    client = OAuth2Session(os.environ['CLASSY_CLIENT_ID'], token=token)
+    resp = client.put("https://api.classy.org/2.0/" + path, json=json_data, headers={'Content-Type': 'application/json'})
+    print(json_data)
+    print("https://api.classy.org/2.0/" + path)
+    print(resp.text)
+    return resp.json()
+
+
+def get_member_id(email, session):
+    json_data = get_json("members/" + email, get_access_token(session))
     return str(json_data['id'])
 
 
-def has_account(email):
-    json_data = get_json("members/" + email, get_access_token())
+def has_account(email, session):
+    json_data = get_json("members/" + email, get_access_token(session))
     return "error" not in json_data
 
 
 def get_fundraisers(session):
     fundraisers = {}
 
-    json_data = get_json("/organizations/" + os.environ['CLASSY_ORG_ID'] + "/fundraising-pages?filter=member_id="
-                         + session['CLASSY_MEMBER_ID'] + "&with=fundraising_team", get_access_token())
-    # json_data = get_json("/organizations/" + os.environ['CLASSY_ORG_ID'] + "/fundraising-pages?filter=member_id=5922949"
-    #                      "&with=fundraising_team", get_access_token())
+    json_data = get_json("organizations/" + os.environ['CLASSY_ORG_ID'] + "/fundraising-pages?filter=member_id="
+                         + session['CLASSY_MEMBER_ID'] + "&with=fundraising_team", get_access_token(session))
     for fundraiser_json in json_data['data']:
         fundraiser_label = fundraiser_json['title']
         if fundraiser_json['fundraising_team_id'] is not None:
@@ -64,8 +82,8 @@ def get_fundraisers(session):
     return fundraisers.items()
 
 
-def get_fundraiser(id):
-    return get_json("/fundraising-pages/" + id, get_access_token())
+def get_fundraiser(id, session):
+    return get_json("fundraising-pages/" + str(id), get_access_token(session))
 
 
 # TODO: Should likely only be applicable to team *leads* -- on hold
@@ -78,10 +96,9 @@ def get_fundraiser(id):
 
 
 def create_donation(donation_form, session):
-    page_id = donation_form.cleaned_data['fundraisers']  # TODO: 'fundraisers' is a ChoiceField -- is this correct?
+    page_id = int(donation_form.cleaned_data['fundraiser'])  # TODO: Can a ChoiceField be typed and return an int value?
     # TODO: May eventually support donations for whole teams, and would need 'fundraising_team_id' set
-    # TODO: Haven't tested get_fundraiser() yet...
-    campaign_id = get_fundraiser(page_id)['campaign_id']
+    campaign_id = int(get_fundraiser(page_id, session)['campaign_id'])
 
     first_name = donation_form.cleaned_data['first_name']
     last_name = donation_form.cleaned_data['last_name']
@@ -97,9 +114,10 @@ def create_donation(donation_form, session):
     state = donation_form.cleaned_data['state']
     zip = donation_form.cleaned_data['zip']
 
-    anonymous = donation_form.cleaned_data['anonymous']
+    # TODO: Not working -- giving 'true' even when the first option is selected
+    anonymous = bool(donation_form.cleaned_data['anonymous'])  # TODO: Use a BoolField with a Select widget?
     comment = donation_form.cleaned_data['comment']
-    amount = donation_form.cleaned_data['amount']
+    amount = float(donation_form.cleaned_data['amount'])  # float needed for JSON
     type = donation_form.cleaned_data['type']
     check_num = donation_form.cleaned_data['check_num']
 
@@ -118,16 +136,9 @@ def create_donation(donation_form, session):
         "is_anonymous": anonymous,
         "items": [
             {
-                # TODO: In dollars?  Or cents?
                 "price": amount,
-                # TODO: Needed?
-                # "overhead_amount": 25,
-                # TODO: Needed?
-                # "product_id": 123,
                 "product_name": "Offline Donation",
-                # TODO: Needed?
-                # "quantity": 1,
-                "type": type
+                "type": "donation"
             }
         ],
         # "member_email_address": "member@classy.org",
@@ -135,26 +146,34 @@ def create_donation(donation_form, session):
         # "member_phone": "555-555-5555",
         "offline_payment_info": {
             "check_number": check_num,
-            # TODO: Needed?
-            # "description": "Transaction Item Description",
-            "payment_type": "cash",
+            "payment_type": type,
         },
-        "metadata": {
-            "approved": False
-        },
+        # "metadata": {
+        #     "approved": "false"
+        # },
     }
     json_data = json.dumps(donation)
+    # print(json_data)
 
-    post_json("/campaigns/" + campaign_id + "/transactions", json_data, session['CLASSY_TOKEN'])
+    create_response = post_json("campaigns/" + str(campaign_id) + "/transactions", json_data, get_access_token(session))
+
+    # update = {
+    #     "status": "incomplete"
+    # }
+    # print("transactions/" + create_response['id'])
+    # print(json.dumps(update))
+    # put_json("transactions/" + create_response['id'], json.dumps(update), get_access_token(session))
 
 
-# >>> from requests_oauthlib import OAuth2Session
-# >>> from oauthlib.oauth2 import TokenExpiredError
-# >>> try:
-# ...     client = OAuth2Session(client_id, token=token)
-# ...     r = client.get(protected_url)
-# >>> except TokenExpiredError as e:
-# ...     token = client.refresh_token(refresh_url, **extra)
-# ...     token_saver(token)
-# >>> client = OAuth2Session(client_id, token=token)
-# >>> r = client.get(protected_url)
+def get_donations(session):
+    # update = {
+    #      "status": "incomplete"
+    # }
+    # put_json("transactions/9930815", json.dumps(update), get_access_token(session))
+
+    # TODO: Limit only to needed fields.  Ex: &fields=id,billing_first_name,billing_last_name
+    json_data = get_json("organizations/" + os.environ['CLASSY_ORG_ID'] + "/transactions?"
+                                          + "filter=payment_method%3Doffline",
+                         get_access_token(session))
+
+    return json_data['data']

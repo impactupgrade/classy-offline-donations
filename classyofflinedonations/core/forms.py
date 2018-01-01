@@ -46,11 +46,11 @@ class DonationForm(BootstrapForm):
     zip = forms.CharField(required=False, label="Zip")
 
     # TODO: Not sure if Django will handle the bool values on its own
-    ANONYMOUS_CHOICES = ((True, 'Show donor name in public activity feed'), (False, 'Keep donor anonymous'))
-    anonymous = forms.ChoiceField(choices=ANONYMOUS_CHOICES, label="Public Activity Feed: Anonymous?")
-    comment = forms.CharField(widget=forms.Textarea(), required=False, label="Public Activity Feed: Donor Comment")
+    ANONYMOUS_CHOICES = [(False, 'Show donor name/comment in public activity feed'), (True, 'Keep donor anonymous')]
+    anonymous = forms.ChoiceField(choices=ANONYMOUS_CHOICES, label="Public Activity Feed - Anonymous?")
+    comment = forms.CharField(widget=forms.Textarea(), required=False, label="Public Activity Feed - Donor Comment")
     amount = forms.DecimalField(label="Donation Amount ($ USD)")
-    TYPE_CHOICES = (('check', 'Check'), ('cash', 'Cash'))
+    TYPE_CHOICES = [('check', 'Check'), ('cash', 'Cash')]
     type = forms.ChoiceField(choices=TYPE_CHOICES, label="Payment Type")
     check_num = forms.CharField(required=False, label="Check #")
 
