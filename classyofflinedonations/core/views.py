@@ -22,7 +22,7 @@ def core_login(request):
             user = authenticate(username=email, password=password)
             if user is not None:
                 login(request, user)
-                classy.set_access_token(email, request.session)
+                classy.login(email, request.session)
                 if request.POST.get('next') is not None:
                     return redirect(request.POST.get('next'))
                 else:
@@ -85,7 +85,7 @@ def donate(request):
 
 @permission_required('core.can_approve_donation', login_url="/core/login")
 def approve(request):
-    donations = classy.get_donations(request.session)
+    donations = classy.get_unapproved_donations(request.session)
 
     # if request.method == 'POST':
     # TODO: use to approve 1..n donations with checkboxes
