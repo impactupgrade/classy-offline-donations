@@ -1,15 +1,10 @@
 {% extends "core/base.html" %}
 {% load bootstrap_template_tags %}
 
-{% block title %}Classy Offline Donations :: ENABLE USER{% endblock %}
+{% block title %}Enable User :: Classy Offline Donations{% endblock %}
 
 {% block content %}
     <div class="container">
-        <div class="jumbotron">
-            <h1>Classy Offline Donations: ENABLE USER</h1>
-            <p>TODO</p>
-        </div>
-
         <form action="/enable-user" method="post">
             {% csrf_token %}
             <div class="row">

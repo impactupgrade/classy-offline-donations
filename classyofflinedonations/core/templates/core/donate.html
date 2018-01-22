@@ -1,15 +1,10 @@
 {% extends "core/base.html" %}
 {% load bootstrap_template_tags %}
 
-{% block title %}Classy Offline Donations :: RECORD DONATION{% endblock %}
+{% block title %}Record Donation :: Classy Offline Donations{% endblock %}
 
 {% block content %}
     <div class="container">
-        <div class="jumbotron">
-            <h1>Classy Offline Donations: RECORD DONATION</h1>
-            <p>TODO</p>
-        </div>
-
         <form action="/donate" method="post">
             {% csrf_token %}
             <div class="row">

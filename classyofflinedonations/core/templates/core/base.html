@@ -17,6 +17,33 @@
             <div class="alert alert-{{ message.tags }}">{{ message }}</div>
         {% endfor %}
 
+        <nav class="navbar navbar-default">
+            <div class="container">
+                <div class="navbar-header page-scroll">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+                        <span class="sr-only">Toggle Navigation</span> MENU <i class="fa fa-bars"></i>
+                    </button>
+                    <p><strong>Classy Offline Donations</strong><br/>Organization: <strong>{{ organization_name }}</strong></p>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if user.is_authenticated %}
+                            <li><a href="/donate">Record Donation</a></li>
+                            <li><a href="/approve">Approve Donations</a></li>
+                            <li><a href="/enable-user">Enable User</a></li>
+                            <li><a href="/logout">Logout ({{ user.email }})</a></li>
+                        {% else %}
+                            <li><a href="/login">Login</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+            </div>
+            <!-- /.container-fluid -->
+        </nav>
+
         {% block content %}{% endblock %}
     </body>
 </html>

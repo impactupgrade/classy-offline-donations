@@ -1,15 +1,10 @@
 {% extends "core/base.html" %}
 {% load bootstrap_template_tags %}
 
-{% block title %}Classy Offline Donations :: APPROVE DONATIONS{% endblock %}
+{% block title %}Approve Donations :: Classy Offline Donations{% endblock %}
 
 {% block content %}
     <div class="container">
-        <div class="jumbotron">
-            <h1>Classy Offline Donations: APPROVE DONATIONS</h1>
-            <p>TODO</p>
-        </div>
-
         {% for donation in donations %}
             <p>{{ donation }}</p>
         {% endfor %}

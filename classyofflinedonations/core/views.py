@@ -1,3 +1,5 @@
+import os
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -9,8 +11,7 @@ from .services import classy
 
 
 def index(request):
-    context = {}
-    return render(request, 'core/index.html', context)
+    return render(request, 'core/index.html', {'organization_name': os.environ['ORG_NAME']})
 
 
 def core_login(request):
