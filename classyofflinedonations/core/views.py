@@ -26,7 +26,7 @@ def core_login(request):
                 if request.POST.get('next') is not None:
                     return redirect(request.POST.get('next'))
                 else:
-                    return redirect('/core')
+                    return redirect('/')
             else:
                 messages.error(request, 'Invalid email or password')
 
@@ -41,10 +41,10 @@ def core_login(request):
 
 def core_logout(request):
     logout(request)
-    return redirect('/core')
+    return redirect('/')
 
 
-@permission_required('core.can_enable_user', login_url="/core/login")
+@permission_required('core.can_enable_user', login_url="/login")
 def enable_user(request):
     if request.method == 'POST':
         form = EnableUserForm(request.POST)
@@ -56,7 +56,7 @@ def enable_user(request):
                 user.save()
 
                 messages.success(request, 'Successfully enabled ' + email)
-                return redirect('/core/enable-user')
+                return redirect('/enable-user')
             else:
                 messages.error(request, email + ' does not exist in Classy')
 
@@ -66,7 +66,7 @@ def enable_user(request):
     return render(request, 'core/enable-user.html', {'form': form})
 
 
-@login_required(login_url="/core/login")
+@login_required(login_url="/login")
 def donate(request):
     fundraiser_choices = classy.get_fundraisers(request.session)
 
@@ -75,7 +75,7 @@ def donate(request):
         if form.is_valid():
             classy.create_donation(form, request.session)
             messages.success(request, 'Successfully created donation!')
-            return redirect('/core/donate')
+            return redirect('/donate')
     else:
         # team_choices = classy.get_teams(request.session)
         form = DonationForm(fundraiser_choices)
@@ -83,7 +83,7 @@ def donate(request):
     return render(request, 'core/donate.html', {'form': form})
 
 
-@permission_required('core.can_approve_donation', login_url="/core/login")
+@permission_required('core.can_approve_donation', login_url="/login")
 def approve(request):
     donations = classy.get_unapproved_donations(request.session)
 
