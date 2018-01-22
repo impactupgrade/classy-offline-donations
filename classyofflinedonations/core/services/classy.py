@@ -1,6 +1,5 @@
 import os
 import requests
-import json
 import time
 
 
@@ -21,7 +20,7 @@ def set_access_token(session):
     print(response.text)
     json_data = response.json()
     session['CLASSY_TOKEN'] = json_data['access_token']
-    session['CLASSY_TOKEN_EXP_TS'] = time.time() + (json_data['expires_in'] * 1000)
+    session['CLASSY_TOKEN_EXP_TS'] = time.time() + json_data['expires_in']
 
 
 def login(email, session):
