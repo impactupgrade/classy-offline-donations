@@ -48,7 +48,7 @@ def core_logout(request):
     return redirect('/')
 
 
-@permission_required('core.can_enable_user', login_url="/login")
+@permission_required('auth | user | Can add user', login_url="/login")
 def enable_user(request):
     if request.method == 'POST':
         form = EnableUserForm(request.POST)
@@ -87,7 +87,7 @@ def donate(request):
     return render(request, 'core/donate.html', {'form': form, 'organization_name': os.environ['ORG_NAME']})
 
 
-@permission_required('core.can_approve_donation', login_url="/login")
+@permission_required('auth | user | Can add user', login_url="/login")
 def approve(request):
     donations = classy.get_unapproved_donations(request.session)
 
