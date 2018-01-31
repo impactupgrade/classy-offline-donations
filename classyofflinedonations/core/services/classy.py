@@ -1,6 +1,7 @@
 import os
 import requests
 import time
+import json
 
 
 def get_access_token(session):
@@ -111,8 +112,7 @@ def create_donation(donation_form, session):
     state = donation_form.cleaned_data['state']
     zip = donation_form.cleaned_data['zip']
 
-    # TODO: Not working -- giving 'true' even when the first option is selected
-    anonymous = bool(donation_form.cleaned_data['anonymous'])  # TODO: Use a BoolField with a Select widget?
+    anonymous = bool(donation_form.cleaned_data['anonymous'] == 'True')
     comment = donation_form.cleaned_data['comment']
     amount = float(donation_form.cleaned_data['amount'])  # float needed for JSON
     type = donation_form.cleaned_data['type']
@@ -149,7 +149,8 @@ def create_donation(donation_form, session):
         },
     }
 
-    post_json("campaigns/" + str(campaign_id) + "/transactions", json_data, session)
+    json_formatted = json.dumps(json_data)
+    post_json("campaigns/" + str(campaign_id) + "/transactions", json_formatted, session)
 
 
 def get_unapproved_donations(session):
