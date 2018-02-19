@@ -33,8 +33,10 @@
                             {% if is_classy_member %}
                                 <li><a href="/donate">Record Donation</a></li>
                             {% endif %}
-                            <li><a href="/approve">Approve Donations</a></li>
-                            <li><a href="/enable-user">Enable User</a></li>
+                            {% if user.is_staff %}
+                                <li><a href="/approve">Approve Donations</a></li>
+                                <li><a href="/enable-user">Enable User</a></li>
+                            {% endif %}
                             <li><a href="/logout">Logout ({{ user.username }})</a></li>
                         {% else %}
                             <li><a href="/login">Login</a></li>
