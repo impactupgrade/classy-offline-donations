@@ -30,10 +30,12 @@
                 <div class="collapse navbar-collapse" id="navbar-collapse-1">
                     <ul class="nav navbar-nav navbar-right">
                         {% if user.is_authenticated %}
-                            <li><a href="/donate">Record Donation</a></li>
+                            {% if is_classy_member %}
+                                <li><a href="/donate">Record Donation</a></li>
+                            {% endif %}
                             <li><a href="/approve">Approve Donations</a></li>
                             <li><a href="/enable-user">Enable User</a></li>
-                            <li><a href="/logout">Logout ({{ user.email }})</a></li>
+                            <li><a href="/logout">Logout ({{ user.username }})</a></li>
                         {% else %}
                             <li><a href="/login">Login</a></li>
                         {% endif %}

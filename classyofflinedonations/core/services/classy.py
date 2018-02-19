@@ -58,12 +58,15 @@ def put_json(path, json_data, session):
 
 def get_member_id(email, session):
     json_data = get_json("members/" + email, session)
-    return str(json_data['id'])
+    if 'id' in json_data:
+        return str(json_data['id'])
+    else:
+        return None
 
 
 def has_account(email, session):
     json_data = get_json("members/" + email, session)
-    return "error" not in json_data
+    return 'error' not in json_data
 
 
 def get_fundraisers(session):

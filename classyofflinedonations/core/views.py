@@ -14,7 +14,7 @@ from .services import classy
 
 
 def index(request):
-    return render(request, 'core/index.html', {'organization_name': os.environ['ORG_NAME']})
+    return render(request, 'core/index.html', __add_context(request))
 
 
 def core_login(request):
@@ -37,7 +37,7 @@ def core_login(request):
     else:
         form = LoginForm()
 
-    context = {'form': form, 'organization_name': os.environ['ORG_NAME']}
+    context = __add_context(request, {'form': form})
     if request.GET.get('next') is not None:
         context['next'] = request.GET.get('next')
     return render(request, 'core/login.html', context)
@@ -67,7 +67,7 @@ def enable_user(request):
     else:
         form = EnableUserForm()
 
-    return render(request, 'core/enable-user.html', {'form': form, 'organization_name': os.environ['ORG_NAME']})
+    return render(request, 'core/enable-user.html', __add_context(request, {'form': form}))
 
 
 @login_required(login_url="/login")
@@ -84,7 +84,7 @@ def donate(request):
         # team_choices = classy.get_teams(request.session)
         form = DonationForm(fundraiser_choices)
 
-    return render(request, 'core/donate.html', {'form': form, 'organization_name': os.environ['ORG_NAME']})
+    return render(request, 'core/donate.html', __add_context(request, {'form': form}))
 
 
 @permission_required('auth | user | Can add user', login_url="/login")
@@ -95,4 +95,11 @@ def approve(request):
     # TODO: use to approve 1..n donations with checkboxes
     # else:
 
-    return render(request, 'core/approve.html', {'donations': donations, 'organization_name': os.environ['ORG_NAME']})
+    return render(request, 'core/approve.html', __add_context(request, {'donations': donations}))
+
+
+def __add_context(request, context={}):
+    context['organization_name'] = os.environ['ORG_NAME']
+    context['is_classy_member'] = 'CLASSY_MEMBER_ID' in request.session\
+                                  and request.session['CLASSY_MEMBER_ID'] is not None
+    return context
