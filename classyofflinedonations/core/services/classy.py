@@ -76,7 +76,7 @@ def get_fundraisers(session):
                          + session['CLASSY_MEMBER_ID'] + "&with=fundraising_team", session)
     for fundraiser_json in json_data['data']:
         fundraiser_label = fundraiser_json['title']
-        if fundraiser_json['fundraising_team_id'] is not None:
+        if fundraiser_json['fundraising_team'] is not None:
             fundraiser_label += " (" + fundraiser_json['fundraising_team']['name'] + ")"
         fundraisers[fundraiser_json['id']] = fundraiser_label
 
