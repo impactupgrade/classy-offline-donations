@@ -1,9 +1,10 @@
 import os
 
+from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from .forms import *
@@ -48,7 +49,7 @@ def core_logout(request):
     return redirect('/')
 
 
-@permission_required('auth | user | Can add user', login_url="/login")
+@staff_member_required(login_url="/login")
 def enable_user(request):
     if request.method == 'POST':
         form = EnableUserForm(request.POST)
@@ -87,7 +88,7 @@ def donate(request):
     return render(request, 'core/donate.html', __add_context(request, {'form': form}))
 
 
-@permission_required('auth | user | Can add user', login_url="/login")
+@staff_member_required(login_url="/login")
 def approve(request):
     donations = classy.get_unapproved_donations(request.session)
 
