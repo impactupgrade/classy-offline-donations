@@ -106,9 +106,9 @@ def create_donation(donation_form, session):
 
     company_name = donation_form.cleaned_data['company_name']
 
-    # TODO: Unclear if these are needed.  Not sure if the `member_*` means they have to match actual Classy accounts.
-    # email = donation_form.cleaned_data['email']
-    # phone = donation_form.cleaned_data['phone']
+    # TODO: Not sure if the `member_*` means they have to match actual Classy accounts.
+    email = donation_form.cleaned_data['email']
+    phone = donation_form.cleaned_data['phone']
 
     address = donation_form.cleaned_data['address']
     city = donation_form.cleaned_data['city']
@@ -141,9 +141,8 @@ def create_donation(donation_form, session):
                 "type": "donation"
             }
         ],
-        # "member_email_address": "member@classy.org",
-        # "member_name": "Classy Member",
-        # "member_phone": "555-555-5555",
+        "member_email_address": email,
+        "member_phone": phone,
         "offline_payment_info": {
             "check_number": check_num,
             "payment_type": type,

@@ -5,8 +5,51 @@
 
 {% block content %}
     <div class="container">
-        {% for donation in donations %}
-            <p>{{ donation }}</p>
-        {% endfor %}
+        <form action="/approve" method="post">
+            {% csrf_token %}
+
+            <table class="table table-striped">
+                <thead>
+                    <th></th>
+                    <th>Date</th>
+                    <th>Fundraiser</th>
+                    <th>Donor</th>
+                    <th>Donation</th>
+                    <th>Comment</th>
+                </thead>
+                <tbody>
+                    {% for donation in donations %}
+                        <!--<p>{{ donation }}</p>-->
+                        <tr>
+                            <td>
+                                <input type="checkbox" value="{{ donation.id }}" name="donation_ids">
+                            </td>
+                            <td>{{ donation.created_at }}</td>
+                            <td>TODO fundraiser/campaign</td>
+                            <td>
+                                Individual: {{ donation.member_name }}<br/>
+                                Company: {{ donation.company_name }}<br/>
+                                Email: {{ donation.member_email_address }}<br/>
+                                Phone: {{ donation.member_phone }}
+                            </td>
+                            <td>
+                                Amount: {{ donation.total_gross_amount }}<br/>
+                                Type: {{ donation.offline_payment_info.payment_type }}<br/>
+                                Check Num: {{ donation.offline_payment_info.check_number }}
+                            </td>
+                            <td>{{ donation.comment }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <hr/>
+
+            <div class="row">
+                <div class="form-group col-xs-12">
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </div>
+            </div>
+        </form>
     </div>
 {% endblock %}

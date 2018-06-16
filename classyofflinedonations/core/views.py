@@ -92,11 +92,18 @@ def donate(request):
 def approve(request):
     donations = classy.get_unapproved_donations(request.session)
 
-    # if request.method == 'POST':
-    # TODO: use to approve 1..n donations with checkboxes
-    # else:
+    if request.method == 'POST':
+        form = ApproveDonationForm(donations, request.POST)
+        if form.is_valid():
+            for donation_id in form.cleaned_data['donation_ids']:
+                # TODO: update donation: remove "unapproved" from offline description, and add additional metadata field to track the current admin user that accepted it
+                print("TEST " + donation_id)
+            messages.success(request, 'Successfully approved donations!')
+            return redirect('/approve')
+    else:
+        form = ApproveDonationForm(donations)
 
-    return render(request, 'core/approve.html', __add_context(request, {'donations': donations}))
+    return render(request, 'core/approve.html', __add_context(request, {'donations': donations, 'form': form}))
 
 
 def __add_context(request, context={}):

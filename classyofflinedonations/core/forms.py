@@ -56,3 +56,12 @@ class DonationForm(BootstrapForm):
 
     # TODO: Required for now, but will need to make optional once Team is supported.  But *one* of them is required!
     fundraiser = forms.ChoiceField(choices=(), label="Fundraiser")
+
+
+class ApproveDonationForm(BootstrapForm):
+    def __init__(self, donations=(), *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # TODO: Only though we're only using the id, Django appears to expect a tuple here.  Way around it?
+        self.fields['donation_ids'].choices = [(donation['id'], donation) for donation in donations]
+
+    donation_ids = forms.MultipleChoiceField(required=False, widget=forms.CheckboxSelectMultiple)
