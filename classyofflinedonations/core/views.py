@@ -96,8 +96,7 @@ def approve(request):
         form = ApproveDonationForm(donations, request.POST)
         if form.is_valid():
             for donation_id in form.cleaned_data['donation_ids']:
-                # TODO: update donation: remove "unapproved" from offline description, and add additional metadata field to track the current admin user that accepted it
-                print("TEST " + donation_id)
+                classy.approve_donation(donation_id, request.session)
             messages.success(request, 'Successfully approved donations!')
             return redirect('/approve')
     else:

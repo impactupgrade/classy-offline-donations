@@ -1,7 +1,6 @@
 import os
 import requests
 import time
-import json
 
 
 def get_access_token(session):
@@ -17,8 +16,8 @@ def set_access_token(session):
             'client_id': os.environ['CLASSY_CLIENT_ID'],
             'client_secret': os.environ['CLASSY_CLIENT_SECRET']}
     response = requests.post('https://api.classy.org/oauth2/auth', data=data)
-    print('https://api.classy.org/oauth2/auth')
-    print(response.text)
+    # print('https://api.classy.org/oauth2/auth')
+    # print(response.text)
     json_data = response.json()
     session['CLASSY_TOKEN'] = json_data['access_token']
     session['CLASSY_TOKEN_EXP_TS'] = time.time() + json_data['expires_in']
@@ -33,8 +32,8 @@ def get_json(path, session):
     token = get_access_token(session)
     headers = {'Authorization': 'BEARER ' + token}
     response = requests.get('https://api.classy.org/2.0/' + path, headers=headers)
-    print("https://api.classy.org/2.0/" + path)
-    print(response.text)
+    # print("https://api.classy.org/2.0/" + path)
+    # print(response.text)
     return response.json()
 
 
@@ -42,18 +41,18 @@ def post_json(path, json_data, session):
     token = get_access_token(session)
     headers = {'Authorization': 'BEARER ' + token, 'Content-Type': 'application/json'}
     response = requests.post('https://api.classy.org/2.0/' + path, json=json_data, headers=headers)
-    print("https://api.classy.org/2.0/" + path)
-    print(json_data)
-    print(response.text)
+    # print("https://api.classy.org/2.0/" + path)
+    # print(json_data)
+    # print(response.text)
 
 
 def put_json(path, json_data, session):
     token = get_access_token(session)
     headers = {'Authorization': 'BEARER ' + token, 'Content-Type': 'application/json'}
     response = requests.put('https://api.classy.org/2.0/' + path, json=json_data, headers=headers)
-    print("https://api.classy.org/2.0/" + path)
-    print(json_data)
-    print(response.text)
+    # print("https://api.classy.org/2.0/" + path)
+    # print(json_data)
+    # print(response.text)
 
 
 def get_member_id(email, session):
@@ -151,14 +150,23 @@ def create_donation(donation_form, session):
         },
     }
 
-    json_formatted = json.dumps(json_data)
-    post_json("campaigns/" + str(campaign_id) + "/transactions", json_formatted, session)
+    post_json("campaigns/" + str(campaign_id) + "/transactions", json_data, session)
 
 
 def get_unapproved_donations(session):
-    # TODO: Limit only to needed fields.  Ex: &fields=id,billing_first_name,billing_last_name
     json_data = get_json(
         "organizations/" + os.environ['CLASSY_ORG_ID'] + "/transactions?"
         + "filter=offline_payment_info.description%3Dunapproved&with=offline_payment_info", session)
 
     return json_data['data']
+
+
+def approve_donation(donation_id, session):
+    # TODO: add additional metadata field to track the current admin user that accepted it
+    json_data = {
+        "offline_payment_info": {
+            "description": "approved"
+        }
+    }
+
+    put_json("transactions/" + str(donation_id), json_data, session)
