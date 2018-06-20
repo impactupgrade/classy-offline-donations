@@ -105,6 +105,13 @@ def approve(request):
     return render(request, 'core/approve.html', __add_context(request, {'donations': donations, 'form': form}))
 
 
+@staff_member_required(login_url="/login")
+def delete(request, donation_id):
+    classy.delete_donation(donation_id, request.session)
+    messages.success(request, 'Successfully deleted the donation!')
+    return redirect('/approve')
+
+
 def __add_context(request, context={}):
     context['organization_name'] = os.environ['ORG_NAME']
     context['is_classy_member'] = 'CLASSY_MEMBER_ID' in request.session\

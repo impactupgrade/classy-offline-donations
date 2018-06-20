@@ -156,7 +156,7 @@ def create_donation(donation_form, session):
 def get_unapproved_donations(session):
     json_data = get_json(
         "organizations/" + os.environ['CLASSY_ORG_ID'] + "/transactions?"
-        + "filter=offline_payment_info.description%3Dunapproved&with=offline_payment_info", session)
+        + "filter=status%3Dsuccess,offline_payment_info.description%3Dunapproved&with=offline_payment_info", session)
 
     return json_data['data']
 
@@ -167,6 +167,14 @@ def approve_donation(donation_id, session):
         "offline_payment_info": {
             "description": "approved"
         }
+    }
+
+    put_json("transactions/" + str(donation_id), json_data, session)
+
+
+def delete_donation(donation_id, session):
+    json_data = {
+        "status": "canceled"
     }
 
     put_json("transactions/" + str(donation_id), json_data, session)
