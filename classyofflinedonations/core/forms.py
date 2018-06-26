@@ -31,32 +31,32 @@ class DonationForm(BootstrapForm):
         self.fields['fundraiser'].choices = fundraiser_choices
         # self.team = forms.ChoiceField(choices=team_choices, label="Team")
 
-    # individual
-    first_name = forms.CharField(required=False, label="First Name")
-    last_name = forms.CharField(required=False, label="Last Name")
+    # individual (technically required, but mutually exclusive with company)
+    first_name = forms.CharField(required=False, label="* First Name")
+    last_name = forms.CharField(required=False, label="* Last Name")
 
-    # company
-    company_name = forms.CharField(required=False, label="Company / Organization Name")
+    # company (technically required, but mutually exclusive with individual)
+    company_name = forms.CharField(required=False, label="* Company / Organization Name")
 
     email = forms.EmailField(required=False, label="Email")
     phone = forms.CharField(required=False, label="Phone")
 
     address = forms.CharField(required=False, label="Address")
     city = forms.CharField(required=False, label="City")
-    state = USStateField(widget=USStateSelect, required=False, label="State")
+    state = USStateField(required=False, widget=USStateSelect, label="State")
     zip = forms.CharField(required=False, label="Zip")
 
     # TODO: Not sure if Django will handle the bool values on its own
     ANONYMOUS_CHOICES = [(False, 'Show donor name/comment in public activity feed'), (True, 'Keep donor anonymous')]
-    anonymous = forms.ChoiceField(choices=ANONYMOUS_CHOICES, label="Public Activity Feed - Anonymous?")
-    comment = forms.CharField(widget=forms.Textarea(), required=False, label="Public Activity Feed - Donor Comment")
-    amount = forms.DecimalField(label="Donation Amount ($ USD)")
+    anonymous = forms.ChoiceField(required=True, choices=ANONYMOUS_CHOICES, label="Public Activity Feed - Anonymous?")
+    comment = forms.CharField(required=False, widget=forms.Textarea(), label="Public Activity Feed - Donor Comment")
+    amount = forms.DecimalField(required=True, label="* Donation Amount ($ USD)")
     TYPE_CHOICES = [('check', 'Check'), ('cash', 'Cash')]
-    type = forms.ChoiceField(choices=TYPE_CHOICES, label="Payment Type")
+    type = forms.ChoiceField(required=True, choices=TYPE_CHOICES, label="* Payment Type")
     check_num = forms.CharField(required=False, label="Check #")
 
     # TODO: Required for now, but will need to make optional once Team is supported.  But *one* of them is required!
-    fundraiser = forms.ChoiceField(choices=(), label="Fundraiser")
+    fundraiser = forms.ChoiceField(required=True, choices=(), label="* Fundraiser")
 
 
 class ApproveDonationForm(BootstrapForm):

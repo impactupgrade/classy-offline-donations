@@ -7,6 +7,15 @@
     <div class="container">
         <form action="/donate" method="post">
             {% csrf_token %}
+
+            <div class="row">
+                <div class="col-xs-12 col-sm-offset-2 col-sm-8">
+                    <p class="small pull-right">* &lt;- Denotes required fields.</p>
+                </div>
+            </div>
+
+            <hr/>
+
             <div class="row">
                 <div class="col-xs-12 col-sm-offset-2 col-sm-8">
                     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
