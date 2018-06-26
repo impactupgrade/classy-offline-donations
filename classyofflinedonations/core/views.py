@@ -90,13 +90,13 @@ def donate(request):
 
 @staff_member_required(login_url="/login")
 def approve(request):
-    donations = classy.get_unapproved_donations(request.session)
+    donations = classy.get_under_review_donations(request.session)
 
     if request.method == 'POST':
         form = ApproveDonationForm(donations, request.POST)
         if form.is_valid():
             for donation_id in form.cleaned_data['donation_ids']:
-                classy.approve_donation(donation_id, request.session)
+                classy.approve_donation(donation_id, request.session, request.user.username)
             messages.success(request, 'Successfully approved donations!')
             return redirect('/approve')
     else:
@@ -106,9 +106,9 @@ def approve(request):
 
 
 @staff_member_required(login_url="/login")
-def delete(request, donation_id):
-    classy.delete_donation(donation_id, request.session)
-    messages.success(request, 'Successfully deleted the donation!')
+def unapprove(request, donation_id):
+    classy.unapprove_donation(donation_id, request.session, request.user.username)
+    messages.success(request, 'Successfully unapproved the donation.')
     return redirect('/approve')
 
 

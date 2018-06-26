@@ -8,6 +8,7 @@ def get_access_token(session):
             or time.time() >= session['CLASSY_TOKEN_EXP_TS']:
         set_access_token(session)
 
+    print("access token: " + session['CLASSY_TOKEN'])
     return session['CLASSY_TOKEN']
 
 
@@ -146,35 +147,43 @@ def create_donation(donation_form, session):
             "check_number": check_num,
             "payment_type": type,
             # TODO: Good enough for now.  However, working with Classy team on alternatives.
-            "description": "unapproved"
+            "description": "under_review"
         },
     }
 
     post_json("campaigns/" + str(campaign_id) + "/transactions", json_data, session)
 
 
-def get_unapproved_donations(session):
+def get_under_review_donations(session):
     json_data = get_json(
         "organizations/" + os.environ['CLASSY_ORG_ID'] + "/transactions?"
-        + "filter=status%3Dsuccess,offline_payment_info.description%3Dunapproved&with=offline_payment_info", session)
+        + "filter=status%3Dsuccess,offline_payment_info.description%3Dunder_review&with=offline_payment_info", session)
 
     return json_data['data']
 
 
-def approve_donation(donation_id, session):
-    # TODO: add additional metadata field to track the current admin user that accepted it
+def approve_donation(donation_id, session, current_username):
     json_data = {
         "offline_payment_info": {
             "description": "approved"
+        },
+        "metadata": {
+            "approved_by": current_username
         }
     }
 
     put_json("transactions/" + str(donation_id), json_data, session)
 
 
-def delete_donation(donation_id, session):
+def unapprove_donation(donation_id, session, current_username):
     json_data = {
-        "status": "canceled"
+        "status": "canceled",
+        "offline_payment_info": {
+            "description": "unapproved"
+        },
+        "metadata": {
+            "unapproved_by": current_username
+        }
     }
 
     put_json("transactions/" + str(donation_id), json_data, session)

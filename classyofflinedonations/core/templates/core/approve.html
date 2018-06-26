@@ -39,7 +39,7 @@
                                 Check Num: {{ donation.offline_payment_info.check_number }}
                             </td>
                             <td>{{ donation.comment }}</td>
-                            <td><a href="/delete/{{ donation.id }}" onclick="return confirm('Are you sure?')" class="text-danger">Delete</a></td>
+                            <td><a href="/unapprove/{{ donation.id }}" onclick="return confirm('Are you sure?')" class="text-danger">Unapprove</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>

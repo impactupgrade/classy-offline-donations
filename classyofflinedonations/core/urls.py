@@ -9,5 +9,5 @@ urlpatterns = [
     url(r'^enable-user', views.enable_user, name='enable_user'),
     url(r'^donate', views.donate, name='donate'),
     url(r'^approve', views.approve, name='approve'),
-    url(r'^delete/(?P<donation_id>[0-9]+)', views.delete, name='delete'),
+    url(r'^unapprove/(?P<donation_id>[0-9]+)', views.unapprove, name='unapprove'),
 ]
