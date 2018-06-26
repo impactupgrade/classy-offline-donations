@@ -96,7 +96,7 @@ def get_fundraiser(id, session):
 #     return teams
 
 
-def create_donation(donation_form, session):
+def create_donation(donation_form, session, current_username):
     page_id = int(donation_form.cleaned_data['fundraiser'])  # TODO: Can a ChoiceField be typed and return an int value?
     # TODO: May eventually support donations for whole teams, and would need 'fundraising_team_id' set
     campaign_id = int(get_fundraiser(page_id, session)['campaign_id'])
@@ -149,6 +149,9 @@ def create_donation(donation_form, session):
             # TODO: Good enough for now.  However, working with Classy team on alternatives.
             "description": "under_review"
         },
+        "metadata": {
+            "created_by": current_username
+        }
     }
 
     post_json("campaigns/" + str(campaign_id) + "/transactions", json_data, session)

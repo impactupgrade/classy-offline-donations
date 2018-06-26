@@ -78,7 +78,7 @@ def donate(request):
     if request.method == 'POST':
         form = DonationForm(fundraiser_choices, request.POST)
         if form.is_valid():
-            classy.create_donation(form, request.session)
+            classy.create_donation(form, request.session, request.user.username)
             messages.success(request, 'Successfully created donation!')
             return redirect('/donate')
     else:
