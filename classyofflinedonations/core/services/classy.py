@@ -8,7 +8,7 @@ def get_access_token(session):
             or time.time() >= session['CLASSY_TOKEN_EXP_TS']:
         set_access_token(session)
 
-    print("access token: " + session['CLASSY_TOKEN'])
+    # print("access token: " + session['CLASSY_TOKEN'])
     return session['CLASSY_TOKEN']
 
 
@@ -120,7 +120,6 @@ def create_donation(donation_form, session, current_username):
 
     company_name = donation_form.cleaned_data['company_name']
 
-    # TODO: Not sure if the `member_*` means they have to match actual Classy accounts.
     email = donation_form.cleaned_data['email']
     phone = donation_form.cleaned_data['phone']
 
@@ -134,6 +133,9 @@ def create_donation(donation_form, session, current_username):
     amount = float(donation_form.cleaned_data['amount'])  # float needed for JSON
     type = donation_form.cleaned_data['type']
     check_num = donation_form.cleaned_data['check_num']
+    donation_date = donation_form.cleaned_data['donation_date']
+
+    print(donation_date)
 
     json_data = {
         "billing_address1": address,
@@ -164,11 +166,13 @@ def create_donation(donation_form, session, current_username):
         "metadata": {
             "offline_email_address": email,
             "offline_phone": phone,
+            "offline_donation_date": donation_date,
             "created_by": current_username
         }
     }
 
-    return post_json("campaigns/" + str(campaign_id) + "/transactions", json_data, session)
+    return True
+    # return post_json("campaigns/" + str(campaign_id) + "/transactions", json_data, session)
 
 
 def get_under_review_donations(session):

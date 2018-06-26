@@ -58,6 +58,8 @@ class DonationForm(BootstrapForm):
     # TODO: Required for now, but will need to make optional once Team is supported.  But *one* of them is required!
     fundraiser = forms.ChoiceField(required=True, choices=(), label="* Fundraiser")
 
+    donation_date = forms.CharField(required=True, widget=forms.TextInput(attrs={'data-provide': 'datepicker'}), label="* Date of Donation")
+
 
 class ApproveDonationForm(BootstrapForm):
     def __init__(self, donations=(), *args, **kwargs):
