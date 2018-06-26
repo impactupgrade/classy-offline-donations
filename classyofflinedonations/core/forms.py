@@ -34,11 +34,12 @@ class DonationForm(BootstrapForm):
     # individual
     first_name = forms.CharField(required=False, label="First Name")
     last_name = forms.CharField(required=False, label="Last Name")
-    email = forms.EmailField(required=False, label="Email")
-    phone = forms.CharField(required=False, label="Phone")
 
     # company
     company_name = forms.CharField(required=False, label="Company / Organization Name")
+
+    email = forms.EmailField(required=False, label="Email")
+    phone = forms.CharField(required=False, label="Phone")
 
     address = forms.CharField(required=False, label="Address")
     city = forms.CharField(required=False, label="City")

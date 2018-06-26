@@ -78,8 +78,10 @@ def donate(request):
     if request.method == 'POST':
         form = DonationForm(fundraiser_choices, request.POST)
         if form.is_valid():
-            classy.create_donation(form, request.session, request.user.username)
-            messages.success(request, 'Successfully created donation!')
+            if classy.create_donation(form, request.session, request.user.username):
+                messages.success(request, 'Successfully created donation!')
+            else:
+                messages.error(request, 'Failed to create donation.')
             return redirect('/donate')
     else:
         # team_choices = classy.get_teams(request.session)
@@ -95,9 +97,18 @@ def approve(request):
     if request.method == 'POST':
         form = ApproveDonationForm(donations, request.POST)
         if form.is_valid():
+            success_count = 0
+            error_count = 0
             for donation_id in form.cleaned_data['donation_ids']:
-                classy.approve_donation(donation_id, request.session, request.user.username)
-            messages.success(request, 'Successfully approved donations!')
+                if classy.approve_donation(donation_id, request.session, request.user.username):
+                    success_count += 1
+                else:
+                    error_count += 1
+
+            if error_count == 0:
+                messages.success(request, 'Successfully approved donations!')
+            elif success_count > 0 and error_count > 0:
+                messages.warning(request, 'Successfully approved some donations, but some failed.')
             return redirect('/approve')
     else:
         form = ApproveDonationForm(donations)
@@ -107,8 +118,10 @@ def approve(request):
 
 @staff_member_required(login_url="/login")
 def unapprove(request, donation_id):
-    classy.unapprove_donation(donation_id, request.session, request.user.username)
-    messages.success(request, 'Successfully unapproved the donation.')
+    if classy.unapprove_donation(donation_id, request.session, request.user.username):
+        messages.success(request, 'Successfully unapproved the donation.')
+    else:
+        messages.error(request, 'Failed to unapprove donation.')
     return redirect('/approve')
 
 

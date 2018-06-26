@@ -42,6 +42,13 @@ def post_json(path, json_data, session):
     token = get_access_token(session)
     headers = {'Authorization': 'BEARER ' + token, 'Content-Type': 'application/json'}
     response = requests.post('https://api.classy.org/2.0/' + path, json=json_data, headers=headers)
+
+    if response.status_code < 300:
+        return True
+    else:
+        print("POST " + path + " failed: " + str(response.status_code) + " " + response.text)
+        return False
+
     # print("https://api.classy.org/2.0/" + path)
     # print(json_data)
     # print(response.text)
@@ -51,6 +58,13 @@ def put_json(path, json_data, session):
     token = get_access_token(session)
     headers = {'Authorization': 'BEARER ' + token, 'Content-Type': 'application/json'}
     response = requests.put('https://api.classy.org/2.0/' + path, json=json_data, headers=headers)
+
+    if response.status_code < 300:
+        return True
+    else:
+        print("PUT " + path + " failed: " + str(response.status_code) + " " + response.text)
+        return False
+
     # print("https://api.classy.org/2.0/" + path)
     # print(json_data)
     # print(response.text)
@@ -141,8 +155,6 @@ def create_donation(donation_form, session, current_username):
                 "type": "donation"
             }
         ],
-        "member_email_address": email,
-        "member_phone": phone,
         "offline_payment_info": {
             "check_number": check_num,
             "payment_type": type,
@@ -150,11 +162,13 @@ def create_donation(donation_form, session, current_username):
             "description": "under_review"
         },
         "metadata": {
+            "offline_email_address": email,
+            "offline_phone": phone,
             "created_by": current_username
         }
     }
 
-    post_json("campaigns/" + str(campaign_id) + "/transactions", json_data, session)
+    return post_json("campaigns/" + str(campaign_id) + "/transactions", json_data, session)
 
 
 def get_under_review_donations(session):
@@ -175,7 +189,7 @@ def approve_donation(donation_id, session, current_username):
         }
     }
 
-    put_json("transactions/" + str(donation_id), json_data, session)
+    return put_json("transactions/" + str(donation_id), json_data, session)
 
 
 def unapprove_donation(donation_id, session, current_username):
@@ -189,4 +203,4 @@ def unapprove_donation(donation_id, session, current_username):
         }
     }
 
-    put_json("transactions/" + str(donation_id), json_data, session)
+    return put_json("transactions/" + str(donation_id), json_data, session)

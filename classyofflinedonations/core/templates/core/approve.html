@@ -30,8 +30,8 @@
                             <td>
                                 Individual: {{ donation.member_name }}<br/>
                                 Company: {{ donation.company_name }}<br/>
-                                Email: {{ donation.member_email_address }}<br/>
-                                Phone: {{ donation.member_phone }}
+                                Email: {{ donation.metadata.offline_email_address }}<br/>
+                                Phone: {{ donation.metadata.offline_phone }}
                             </td>
                             <td>
                                 Amount: {{ donation.total_gross_amount }}<br/>
