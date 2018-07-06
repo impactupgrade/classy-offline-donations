@@ -1,6 +1,7 @@
 import os
 import requests
 import time
+from dateutil import parser, tz
 
 
 def get_access_token(session):
@@ -173,11 +174,29 @@ def create_donation(donation_form, session, current_username):
 
 
 def get_under_review_donations(session):
-    json_data = get_json(
+    # TODO: organizations/*/transactions needs to support 'with' to get the fundraiser page + team + campaign,
+    # instead of having to do it here...
+
+    donations_json = get_json(
         "organizations/" + os.environ['CLASSY_ORG_ID'] + "/transactions?"
         + "filter=status%3Dsuccess,offline_payment_info.description%3Dunder_review&with=offline_payment_info", session)
+    donations_data = donations_json['data']
 
-    return json_data['data']
+    # TODO: cache
+    for donation_data in donations_data:
+        fundraising_page_id = donation_data['fundraising_page_id']
+        page_json = get_json("fundraising-pages/" + str(fundraising_page_id) + "?with=fundraising_team,campaign", session)
+
+        # format the date into the same format we're using in the form's datepicker
+        created_at = parser.parse(donation_data['created_at'])
+        created_at = created_at.replace(tzinfo=tz.tzutc())  # response is in UTC, but datetime is naive
+        # TODO: make tz configurable
+        donation_data['created_at'] = created_at.astimezone(tz.gettz('America/New_York')).strftime("%m/%d/%Y")
+
+        # aggregate into the single payload
+        donation_data['page'] = page_json
+
+    return donations_data
 
 
 def approve_donation(donation_id, session, current_username):

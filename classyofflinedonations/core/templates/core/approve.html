@@ -11,7 +11,7 @@
             <table class="table table-striped">
                 <thead>
                     <th>Approve?</th>
-                    <th>Date</th>
+                    <th>Who/When</th>
                     <th>Fundraiser</th>
                     <th>Donor</th>
                     <th>Donation</th>
@@ -20,13 +20,20 @@
                 </thead>
                 <tbody>
                     {% for donation in donations %}
-                        <!--<p>{{ donation }}</p>-->
                         <tr>
                             <td>
                                 <input type="checkbox" value="{{ donation.id }}" name="donation_ids">
                             </td>
-                            <td>{{ donation.created_at }}</td>
-                            <td>TODO fundraiser/campaign</td>
+                            <td>
+                                Created by: {{ donation.metadata.created_by }}<br/>
+                                Created: {{ donation.created_at }}<br/>
+                                Donation Date: {{ donation.metadata.offline_donation_date }}
+                            </td>
+                            <td>
+                                Campaign: <a href="{{ donation.page.campaign.canonical_url }}" target="_blank">{{ donation.page.campaign.name }}</a><br/>
+                                Team: <a href="{{ donation.page.fundraising_team.canonical_url }}" target="_blank">{{ donation.page.fundraising_team.name }}</a><br/>
+                                Page: <a href="{{ donation.page.canonical_url }}" target="_blank">{{ donation.page.title }}</a>
+                            </td>
                             <td>
                                 Individual: {{ donation.member_name }}<br/>
                                 Company: {{ donation.company_name }}<br/>
@@ -53,5 +60,9 @@
                 </div>
             </div>
         </form>
+
+        <!--{% for donation in donations %}-->
+            <!--<p>{{ donation }}</p>-->
+        <!--{% endfor %}-->
     </div>
 {% endblock %}
