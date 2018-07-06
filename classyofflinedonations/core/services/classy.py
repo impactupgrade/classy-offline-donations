@@ -135,8 +135,6 @@ def create_donation(donation_form, session, current_username):
     check_num = donation_form.cleaned_data['check_num']
     donation_date = donation_form.cleaned_data['donation_date']
 
-    print(donation_date)
-
     json_data = {
         "billing_address1": address,
         "billing_city": city,
@@ -171,8 +169,7 @@ def create_donation(donation_form, session, current_username):
         }
     }
 
-    return True
-    # return post_json("campaigns/" + str(campaign_id) + "/transactions", json_data, session)
+    return post_json("campaigns/" + str(campaign_id) + "/transactions", json_data, session)
 
 
 def get_under_review_donations(session):
