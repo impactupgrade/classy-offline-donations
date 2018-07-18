@@ -90,14 +90,18 @@ def get_fundraisers(session):
     fundraisers_json = get_json("organizations/" + os.environ['CLASSY_ORG_ID'] + "/fundraising-pages?filter=member_id="
                          + session['CLASSY_MEMBER_ID'] + "&with=fundraising_team", session)
     for fundraiser_json in fundraisers_json['data']:
+        # TODO: organizations/*/fundraising-pages should support with=campaign, rather than this extra hit
+        # TODO: cache?
+        campaign_json = get_json("campaigns/" + str(fundraiser_json['campaign_id']), session)
+
+        if campaign_json['status'] != 'active':
+            continue
+
         fundraiser_label = fundraiser_json['title']
 
         if fundraiser_json['fundraising_team'] is not None:
             fundraiser_label += " (" + fundraiser_json['fundraising_team']['name'] + ")"
 
-        # TODO: organizations/*/fundraising-pages should support with=campaign, rather than this extra hit
-        # TODO: cache?
-        campaign_json = get_json("campaigns/" + str(fundraiser_json['campaign_id']), session)
         fundraiser_label += " - " + campaign_json['name']
 
         fundraisers[fundraiser_json['id']] = fundraiser_label
