@@ -18,11 +18,11 @@
 
             <div class="row">
                 <div class="col-xs-12 col-sm-offset-2 col-sm-8">
-                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="donation-accordion" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
                             <div class="panel-heading" role="tab" id="headingOne">
                                 <h4 class="panel-title">
-                                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    <a role="button" data-toggle="collapse" data-parent="#donation-accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                         Individual Donation
                                     </a>
                                 </h4>
@@ -43,7 +43,7 @@
                         <div class="panel panel-default">
                             <div class="panel-heading" role="tab" id="headingTwo">
                                 <h4 class="panel-title">
-                                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#donation-accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                         Company Donation
                                     </a>
                                 </h4>
@@ -117,11 +117,51 @@
             <hr/>
 
             <div class="row">
-                <div class="form-group col-xs-6 col-sm-offset-2 col-sm-6">
-                    {% form_group form.fundraiser %}
-                </div>
-                <div class="form-group col-xs-6 col-sm-2">
-                    {% form_group form.donation_date %}
+                <div class="col-xs-12 col-sm-offset-2 col-sm-8">
+                    <div class="panel-group" id="fundraiser-accordion" role="tablist" aria-multiselectable="true">
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="individual-heading">
+                                <h4 class="panel-title">
+                                    <a role="button" data-toggle="collapse" data-parent="#fundraiser-accordion" href="#individual-collapse" aria-expanded="true" aria-controls="individual-collapse">
+                                        Apply to Individual Fundraiser
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="individual-collapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="individual-heading">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="form-group col-xs-8">
+                                            {% form_group form.fundraiser %}
+                                        </div>
+                                        <div class="form-group col-xs-4">
+                                            {% form_group form.donation_date %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="team-heading">
+                                <h4 class="panel-title">
+                                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#fundraiser-accordion" href="#team-collapse" aria-expanded="false" aria-controls="team-collapse">
+                                        Apply to Team Fundraiser
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="team-collapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="team-heading">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="form-group col-xs-8">
+                                            {% form_group form.team %}
+                                        </div>
+                                        <div class="form-group col-xs-4">
+                                            {% form_group form.donation_date %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

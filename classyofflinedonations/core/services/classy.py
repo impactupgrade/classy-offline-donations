@@ -113,19 +113,25 @@ def get_fundraiser(id, session):
     return get_json("fundraising-pages/" + str(id), session)
 
 
-# TODO: Should likely only be applicable to team *leads* -- on hold
-# def get_teams(session):
-#     teams = {}
-#
-#
-#
-#     return teams
+def get_teams(session):
+    teams = {}
+
+    teams_json = get_json("members/" + session['CLASSY_MEMBER_ID'] + "/fundraising-teams?with=campaign", session)
+    for team_json in teams_json['data']:
+        if team_json['campaign']['status'] != 'active':
+            continue
+
+        team_label = team_json['name'] + " - " + team_json['campaign']['name']
+
+        teams[team_json['id']] = team_label
+
+    return teams.items()
 
 
 def create_donation(donation_form, session, current_username):
-    page_id = int(donation_form.cleaned_data['fundraiser'])  # TODO: Can a ChoiceField be typed and return an int value?
-    # TODO: May eventually support donations for whole teams, and would need 'fundraising_team_id' set
-    campaign_id = int(get_fundraiser(page_id, session)['campaign_id'])
+    fundraiser_id = int(donation_form.cleaned_data['fundraiser'])  # TODO: Can a ChoiceField be typed and return an int value?
+    team_id = int(donation_form.cleaned_data['team'])  # TODO: Can a ChoiceField be typed and return an int value?
+    campaign_id = int(get_fundraiser(fundraiser_id, session)['campaign_id'])
 
     first_name = donation_form.cleaned_data['first_name']
     last_name = donation_form.cleaned_data['last_name']
@@ -157,8 +163,9 @@ def create_donation(donation_form, session, current_username):
         "billing_state": state,
         "comment": comment,
         "company_name": company_name,
-        "fundraising_page_id": page_id,
-        # "fundraising_team_id": 333,
+        # TODO: Only one of these at a time...
+        "fundraising_page_id": fundraiser_id,
+        "fundraising_team_id": team_id,
         "is_anonymous": anonymous,
         "items": [
             {

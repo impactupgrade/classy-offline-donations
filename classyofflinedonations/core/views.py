@@ -74,9 +74,10 @@ def enable_user(request):
 @login_required(login_url="/login")
 def donate(request):
     fundraiser_choices = classy.get_fundraisers(request.session)
+    team_choices = classy.get_teams(request.session)
 
     if request.method == 'POST':
-        form = DonationForm(fundraiser_choices, request.POST)
+        form = DonationForm(fundraiser_choices, team_choices, request.POST)
         if form.is_valid():
             if classy.create_donation(form, request.session, request.user.username):
                 messages.success(request, 'Successfully created donation!')
@@ -84,8 +85,7 @@ def donate(request):
                 messages.error(request, 'Failed to create donation.')
             return redirect('/donate')
     else:
-        # team_choices = classy.get_teams(request.session)
-        form = DonationForm(fundraiser_choices)
+        form = DonationForm(fundraiser_choices, team_choices)
 
     return render(request, 'core/donate.html', __add_context(request, {'form': form}))
 

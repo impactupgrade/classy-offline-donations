@@ -26,10 +26,10 @@ class EnableUserForm(BootstrapForm):
 
 
 class DonationForm(BootstrapForm):
-    def __init__(self, fundraiser_choices=(), *args, **kwargs):
+    def __init__(self, fundraiser_choices=(), team_choices=(), *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['fundraiser'].choices = fundraiser_choices
-        # self.team = forms.ChoiceField(choices=team_choices, label="Team")
+        self.fields['team'].choices = team_choices
 
     # individual (technically required, but mutually exclusive with company)
     first_name = forms.CharField(required=False, label="* First Name")
@@ -46,7 +46,6 @@ class DonationForm(BootstrapForm):
     state = USStateField(required=False, widget=USStateSelect, label="State")
     zip = forms.CharField(required=False, label="Zip")
 
-    # TODO: Not sure if Django will handle the bool values on its own
     ANONYMOUS_CHOICES = [(False, 'Show donor name/comment in public activity feed'), (True, 'Keep donor anonymous')]
     anonymous = forms.ChoiceField(required=True, choices=ANONYMOUS_CHOICES, label="Public Activity Feed - Anonymous?")
     comment = forms.CharField(required=False, widget=forms.Textarea(), label="Public Activity Feed - Donor Comment")
@@ -55,8 +54,8 @@ class DonationForm(BootstrapForm):
     type = forms.ChoiceField(required=True, choices=TYPE_CHOICES, label="* Payment Type")
     check_num = forms.CharField(required=False, label="Check #")
 
-    # TODO: Required for now, but will need to make optional once Team is supported.  But *one* of them is required!
     fundraiser = forms.ChoiceField(required=True, choices=(), label="* Fundraiser")
+    team = forms.ChoiceField(required=True, choices=(), label="* Team")
 
     donation_date = forms.CharField(required=True, widget=forms.TextInput(attrs={'data-provide': 'datepicker'}), label="* Date of Donation")
 
