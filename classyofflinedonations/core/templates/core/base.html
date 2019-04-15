@@ -44,15 +44,15 @@
                     <ul class="nav navbar-nav navbar-right">
                         {% if user.is_authenticated %}
                             {% if is_classy_member %}
-                                <li><a href="/donate">Record Donation</a></li>
+                                <li><a href="{% url 'donate' %}">Record Donation</a></li>
                             {% endif %}
                             {% if user.is_staff %}
-                                <li><a href="/approve">Approve Donations</a></li>
-                                <li><a href="/enable-user">Enable User</a></li>
+                                <li><a href="{% url 'approve' %}">Approve Donations</a></li>
+                                <li><a href="{% url 'enable_user' %}">Enable User</a></li>
                             {% endif %}
-                            <li><a href="/logout">Logout ({{ user.username }})</a></li>
+                            <li><a href="{% url 'logout' %}">Logout ({{ user.username }})</a></li>
                         {% else %}
-                            <li><a href="/login">Login</a></li>
+                            <li><a href="{% url 'login' %}">Login</a></li>
                         {% endif %}
                     </ul>
                 </div>
