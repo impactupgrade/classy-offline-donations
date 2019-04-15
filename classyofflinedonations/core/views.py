@@ -1,8 +1,8 @@
 import os
 
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -19,34 +19,11 @@ def index(request):
 
 
 def core_login(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
-            user = authenticate(username=email, password=password)
-            if user is not None:
-                login(request, user)
-                classy.login(email, request.session)
-                if request.POST.get('next') is not None:
-                    return redirect(request.POST.get('next'))
-                else:
-                    return redirect('/')
-            else:
-                messages.error(request, 'Invalid email or password')
-
-    else:
-        form = LoginForm()
-
-    context = __add_context(request, {'form': form})
-    if request.GET.get('next') is not None:
-        context['next'] = request.GET.get('next')
-    return render(request, 'core/login.html', context)
-
-
-def core_logout(request):
-    logout(request)
-    return redirect('/')
+    return LoginView.as_view(
+        template_name='core/login.html',
+        authentication_form=LoginForm,
+        extra_context=__add_context(request)
+    )(request)
 
 
 @staff_member_required(login_url="/login")

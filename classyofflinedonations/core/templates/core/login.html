@@ -5,11 +5,11 @@
 
 {% block content %}
     <div class="container">
-        <form action="/login" method="post">
+        <form action="{% url 'login' %}" method="post">
             {% csrf_token %}
             <div class="row">
                 <div class="form-group col-xs-6 col-sm-offset-2 col-sm-4">
-                    {% form_group form.email %}
+                    {% form_group form.username %}
                 </div>
                 <div class="form-group col-xs-6 col-sm-4">
                     {% form_group form.password %}
@@ -20,7 +20,7 @@
                     {% if next %}
                         <input type="hidden" name="next" value="{{ next }}" />
                     {% endif %}
-                    <button type="submit" class="btn btn-default">Submit</button>
+                    <button type="submit" class="btn btn-default">Login</button>
                 </div>
             </div>
         </form>
