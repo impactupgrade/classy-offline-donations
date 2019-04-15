@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, SetPasswordForm
 from localflavor.us.forms import USStateField, USStateSelect
 
 from classyofflinedonations.core.services import classy
@@ -12,26 +12,27 @@ class BootstrapForm(forms.Form):
             field.widget.attrs['class'] = 'form-control'
 
 
-class AuthenticationBootstrapForm(AuthenticationForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-class LoginForm(AuthenticationBootstrapForm):
+class BootstrapAuthenticationForm(AuthenticationForm, BootstrapForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # TODO: Easier way to override this?
         self.fields['username'].label = "Email"
-
-        # TODO: Without doing this again, not applied -- something out of order in the super __init__?
-        self.fields['username'].widget.attrs['class'] = 'form-control'
-        self.fields['password'].widget.attrs['class'] = 'form-control'
 
     def get_user(self):
         user = self.user_cache
         # TODO: Likely a cleaner way to intercept the successful login and do this...
         classy.login(user.username, self.request.session)
         return user
+
+
+class BootstrapPasswordResetForm(PasswordResetForm, BootstrapForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class BootstrapSetPasswordForm(SetPasswordForm, BootstrapForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
 class EnableUserForm(BootstrapForm):

@@ -1,7 +1,8 @@
 import os
 
 from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetConfirmView, PasswordResetDoneView, \
+    PasswordResetCompleteView
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -11,17 +12,51 @@ from .forms import *
 from .services import classy
 
 
-# TODO: Pull the common context variables (organization_name, etc.) to a helper...
-
-
 def index(request):
     return render(request, 'core/index.html', __add_context(request))
 
 
-def core_login(request):
+# TODO: Is it instead possible to get to the request from urls.py?
+def login(request):
     return LoginView.as_view(
         template_name='core/login.html',
-        authentication_form=LoginForm,
+        authentication_form=BootstrapAuthenticationForm,
+        extra_context=__add_context(request)
+    )(request)
+
+
+# TODO: Is it instead possible to get to the request from urls.py?
+def password_reset(request):
+    return PasswordResetView.as_view(
+        template_name='core/password_reset_form.html',
+        email_template_name='core/password_reset_email.html',
+        subject_template_name='core/password_reset_subject.txt',
+        form_class=BootstrapPasswordResetForm,
+        extra_context=__add_context(request)
+    )(request)
+
+
+# TODO: Is it instead possible to get to the request from urls.py?
+def password_reset_done(request):
+    return PasswordResetDoneView.as_view(
+        template_name='core/password_reset_done.html',
+        extra_context=__add_context(request)
+    )(request)
+
+
+# TODO: Is it instead possible to get to the request from urls.py?
+def password_reset_confirm(request, uidb64, token):
+    return PasswordResetConfirmView.as_view(
+        template_name='core/password_reset_confirm.html',
+        form_class=BootstrapSetPasswordForm,
+        extra_context=__add_context(request)
+    )(request, uidb64=uidb64, token=token)
+
+
+# TODO: Is it instead possible to get to the request from urls.py?
+def password_reset_complete(request):
+    return PasswordResetCompleteView.as_view(
+        template_name='core/password_reset_complete.html',
         extra_context=__add_context(request)
     )(request)
 
