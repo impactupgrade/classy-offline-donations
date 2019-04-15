@@ -2,7 +2,7 @@ import os
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetConfirmView, PasswordResetDoneView, \
-    PasswordResetCompleteView
+    PasswordResetCompleteView, PasswordChangeView, PasswordChangeDoneView
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -21,6 +21,23 @@ def login(request):
     return LoginView.as_view(
         template_name='core/login.html',
         authentication_form=BootstrapAuthenticationForm,
+        extra_context=__add_context(request)
+    )(request)
+
+
+# TODO: Is it instead possible to get to the request from urls.py?
+def password_change(request):
+    return PasswordChangeView.as_view(
+        template_name='core/password_change_form.html',
+        form_class=BootstrapPasswordChangeForm,
+        extra_context=__add_context(request)
+    )(request)
+
+
+# TODO: Is it instead possible to get to the request from urls.py?
+def password_change_done(request):
+    return PasswordChangeDoneView.as_view(
+        template_name='core/password_change_done.html',
         extra_context=__add_context(request)
     )(request)
 

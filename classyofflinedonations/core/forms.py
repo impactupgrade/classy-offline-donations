@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, SetPasswordForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, SetPasswordForm, PasswordChangeForm
 from localflavor.us.forms import USStateField, USStateSelect
 
 from classyofflinedonations.core.services import classy
@@ -23,6 +23,11 @@ class BootstrapAuthenticationForm(AuthenticationForm, BootstrapForm):
         # TODO: Likely a cleaner way to intercept the successful login and do this...
         classy.login(user.username, self.request.session)
         return user
+
+
+class BootstrapPasswordChangeForm(PasswordChangeForm, BootstrapForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
 class BootstrapPasswordResetForm(PasswordResetForm, BootstrapForm):
